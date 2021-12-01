@@ -75,7 +75,7 @@ extension ViewController: UITableViewDataSource {
     }
 
     // 쎌에 대한 설정
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { 
 
         let cell = myTableView.dequeueReusableCell(withIdentifier: MY_TABLE_VIEW_CELL_ID, for: indexPath) as! MyTableViewCell
 
@@ -84,9 +84,18 @@ extension ViewController: UITableViewDataSource {
         
         // 데이터와 UI 연결
         if self.contentArray.count > 0 {
-            cell.feedData = contentArray[indexPath.row]
+            
+            let cellData = contentArray[indexPath.row]
+            
+            cell.updateUI(with: cellData)
         }
 
+        cell.heartBtnAction = { [weak self]currentBtnState in
+            guard let self = self else { return }
+            self.contentArray[indexPath.row].isFavorite = !currentBtnState
+           // self.myTableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+        
         return cell
     }
 

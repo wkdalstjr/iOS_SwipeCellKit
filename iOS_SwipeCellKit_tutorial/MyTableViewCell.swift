@@ -18,25 +18,18 @@ class MyTableViewCell: SwipeTableViewCell {
     @IBOutlet weak var contentLabel: UILabel!
     
     // 하트 버튼
-    @IBOutlet var heartBtn: UIButton!
+    @IBOutlet var heartBtn: MyHeartBtn!
     
     // 따봉 버튼
     @IBOutlet var thumbsUpBtn: UIButton!
     
+    @IBOutlet weak var shareBtn: UIButton!
     
-    // 피드 데이터
-    var feedData: Feed? {
-        didSet{
-            print("MyTableViewCell - didSet / feedData: \(feedData)")
-            
-            if let data = feedData {
-                // 피드 데이터에 따라 쎌의 UI 변경
-                heartBtn.tintColor = data.isFavorite ? #colorLiteral(red: 0.8549019694, green: 0.250980407, blue: 0.4784313738, alpha: 1) : .systemGray
-                thumbsUpBtn.tintColor = data.isThumbsUp ? #colorLiteral(red: 0.1887893739, green: 0.3306484833, blue: 1, alpha: 1) : .systemGray
-                contentLabel.text = data.content
-            }
-        }
-    }
+    @IBOutlet var btns: [UIButton]!
+    
+    var heartBtnAction : ((Bool) -> Void)?
+    
+    
     
     override func awakeFromNib() {
         print("MyTableViewCell - awakeFromNib() called")
@@ -44,7 +37,29 @@ class MyTableViewCell: SwipeTableViewCell {
         
         userProfileImg.layer.cornerRadius = userProfileImg.frame.height / 2
         
+        btns.forEach{ $0.addTarget(self, action: #selector(onBtnClicked(_:)), for: .touchUpInside)}
         
+    }
+    
+    func updateUI(with data: Feed){
+        print("MyTableViewCell - updateUI() called")
+        heartBtn.setState(data.isFavorite)
+        thumbsUpBtn.tintColor = data.isThumbsUp ? #colorLiteral(red: 0.1887893739, green: 0.3306484833, blue: 1, alpha: 1) : #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        contentLabel.text = data.content
+    }
+    
+    @objc fileprivate func onBtnClicked(_ sender: UIButton){
+        switch sender {
+        case heartBtn:
+            print("하트 버튼이 클릭되었다.")
+            heartBtnAction?(heartBtn.isActivated)
+        case thumbsUpBtn:
+            print("따봉 버튼이 클릭되었다.")
+        case shareBtn:
+            print("공유 버튼이 클릭되었다.")
+        default:
+            break
+        }
     }
     
 }
